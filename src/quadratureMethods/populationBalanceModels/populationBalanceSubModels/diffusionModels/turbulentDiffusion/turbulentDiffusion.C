@@ -100,6 +100,7 @@ turbViscosity(const volScalarField& moment) const
             );
 
         return turb.mut()/turb.rho();
+//         return 0.09*sqr(turb.k())/turb.epsilon();
     }
     else if
     (
@@ -113,6 +114,7 @@ turbViscosity(const volScalarField& moment) const
             );
 
         return turb.nut();
+//         return 0.09*sqr(turb.k())/turb.epsilon();
     }
     else
     {

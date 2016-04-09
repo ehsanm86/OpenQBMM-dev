@@ -9,5 +9,6 @@ wclean libso quadratureMethods/quadratureApproximation
 wclean libso quadratureMethods/PDFTransportModels
 wclean libso quadratureMethods/populationBalanceModels
 wclean libso quadratureMethods/mixingModels
+wcleam libso quadratureMethods/mixingReactionMethods
 
 # ----------------------------------------------------------------- end-of-file

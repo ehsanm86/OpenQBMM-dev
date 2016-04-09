@@ -21,49 +21,39 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::moments
-
-Description
-
-SourceFiles
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef moments_H
-#define moments_H
+#include "reactionKernel.H"
 
-#include "volFields.H"
-#include "quadratureNodes.H"
-#include "moment.H"
+// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
+Foam::autoPtr<Foam::reactionSubModels::reactionKernel>
+Foam::reactionSubModels::reactionKernel::New
+(
+    const dictionary& dict
+)
 {
-  
-typedef moment<volScalarField, basicVolScalarNode> basicVolUnivariateMoment;
+    word reactionKernelType(dict.lookup("reactionKernel"));
 
-typedef moment<surfaceScalarField, basicSurfaceScalarNode>
-    basicSurfaceUnivariateMoment;
+    Info<< "Selecting reactionKernel "
+        << reactionKernelType << endl;
 
-typedef moment<volScalarField, basicVolVectorNode> basicVolVectorMoment;
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(reactionKernelType);
 
-typedef moment<surfaceScalarField, basicSurfaceVectorNode>
-    basicSurfaceVectorMoment;
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalError
+            << "reactionKernel::New(const dictionary&) : " << endl
+            << "    unknown reactionKernelType type "
+            << reactionKernelType
+            << ", constructor not in hash table" << endl << endl
+            << "    Valid reactionKernelType types are :" << endl;
+        Info<< dictionaryConstructorTablePtr_->sortedToc() << abort(FatalError);
+    }
 
-typedef moment<volScalarField, extendedVolScalarNode> volUnivariateMoment;
+    return autoPtr<reactionKernel>(cstrIter()(dict));
+}
 
-typedef moment<surfaceScalarField, extendedSurfaceScalarNode> 
-    surfaceUnivariateMoment;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
 
 // ************************************************************************* //

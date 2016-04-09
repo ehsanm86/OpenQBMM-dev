@@ -21,49 +21,38 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::moments
-
-Description
-
-SourceFiles
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef moments_H
-#define moments_H
+#include "mixingKernel.H"
 
-#include "volFields.H"
-#include "quadratureNodes.H"
-#include "moment.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-  
-typedef moment<volScalarField, basicVolScalarNode> basicVolUnivariateMoment;
+namespace mixingSubModels
+{
+    defineTypeNameAndDebug(mixingKernel, 0);
 
-typedef moment<surfaceScalarField, basicSurfaceScalarNode>
-    basicSurfaceUnivariateMoment;
-
-typedef moment<volScalarField, basicVolVectorNode> basicVolVectorMoment;
-
-typedef moment<surfaceScalarField, basicSurfaceVectorNode>
-    basicSurfaceVectorMoment;
-
-typedef moment<volScalarField, extendedVolScalarNode> volUnivariateMoment;
-
-typedef moment<surfaceScalarField, extendedSurfaceScalarNode> 
-    surfaceUnivariateMoment;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
+    defineRunTimeSelectionTable(mixingKernel, dictionary);
+}
+}
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-#endif
+Foam::mixingSubModels::mixingKernel::mixingKernel
+(
+    const dictionary& dict
+)
+:
+    dict_(dict)
+{}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::mixingSubModels::mixingKernel::~mixingKernel()
+{}
+
 
 // ************************************************************************* //

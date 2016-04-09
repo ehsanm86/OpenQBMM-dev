@@ -21,49 +21,65 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::moments
-
-Description
-
-SourceFiles
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef moments_H
-#define moments_H
+#include "reactionKernel.H"
 
-#include "volFields.H"
-#include "quadratureNodes.H"
-#include "moment.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-  
-typedef moment<volScalarField, basicVolScalarNode> basicVolUnivariateMoment;
+namespace reactionSubModels
+{
+    defineTypeNameAndDebug(reactionKernel, 0);
 
-typedef moment<surfaceScalarField, basicSurfaceScalarNode>
-    basicSurfaceUnivariateMoment;
-
-typedef moment<volScalarField, basicVolVectorNode> basicVolVectorMoment;
-
-typedef moment<surfaceScalarField, basicSurfaceVectorNode>
-    basicSurfaceVectorMoment;
-
-typedef moment<volScalarField, extendedVolScalarNode> volUnivariateMoment;
-
-typedef moment<surfaceScalarField, extendedSurfaceScalarNode> 
-    surfaceUnivariateMoment;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
+    defineRunTimeSelectionTable(reactionKernel, dictionary);
+}
+}
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-#endif
+Foam::reactionSubModels::reactionKernel::reactionKernel
+(
+    const dictionary& dict
+)
+:
+    dict_(dict),
+    Ca0_
+    (
+        dict.lookupOrDefault
+        (
+            "Ca0", 
+            dimensionedScalar("zero", dimless, 0.0)  
+        )
+    ),
+    Cb0_
+    (
+        dict.lookupOrDefault
+        (
+            "Cb0",
+            dimensionedScalar("zero", dimless, 0.0)
+        )
+    )
+{}
 
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::reactionSubModels::reactionKernel::~reactionKernel()
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Foam::dimensionedScalar Foam::reactionSubModels::reactionKernel::Ca0() const
+{
+    return Ca0_;
+}
+
+Foam::dimensionedScalar Foam::reactionSubModels::reactionKernel::Cb0() const
+{
+    return Cb0_;
+}
 // ************************************************************************* //

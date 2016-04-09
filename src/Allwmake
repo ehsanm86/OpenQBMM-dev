@@ -9,5 +9,6 @@ wmake libso quadratureMethods/quadratureApproximation
 wmake libso quadratureMethods/PDFTransportModels
 wmake libso quadratureMethods/populationBalanceModels
 wmake libso quadratureMethods/mixingModels
+wmake libso quadratureMethods/mixingReactionMethods
 
 # ----------------------------------------------------------------- end-of-file

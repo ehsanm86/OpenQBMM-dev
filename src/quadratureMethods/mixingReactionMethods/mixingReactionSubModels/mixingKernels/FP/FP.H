@@ -22,45 +22,80 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::moments
+    Foam::mixingModels::mixingKernels::FP
 
 Description
+    Fokker-Planck(FP) kernel. It includes the effect of differential diffusion.
+    
+    \verbatim
+        "Computational methods for turbulent reacting flows"
+        Rodney O. Fox
+        Cambridge university press, 2003
+    \endverbatim
 
 SourceFiles
+    FP.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef moments_H
-#define moments_H
+#ifndef FP_H
+#define FP_H
 
-#include "volFields.H"
-#include "quadratureNodes.H"
-#include "moment.H"
+#include "mixingKernel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-  
-typedef moment<volScalarField, basicVolScalarNode> basicVolUnivariateMoment;
+namespace mixingSubModels
+{
+namespace mixingKernels
+{
 
-typedef moment<surfaceScalarField, basicSurfaceScalarNode>
-    basicSurfaceUnivariateMoment;
+/*---------------------------------------------------------------------------*\
+                          Class FP Declaration
+\*---------------------------------------------------------------------------*/
 
-typedef moment<volScalarField, basicVolVectorNode> basicVolVectorMoment;
+class FP
+:
+    public mixingKernel
+{
+  //- Private Data
+        //- Cphi constant 
+        dimensionedScalar Cphi_;
+public:
 
-typedef moment<surfaceScalarField, basicSurfaceVectorNode>
-    basicSurfaceVectorMoment;
+        //- Runtime type information
+        TypeName("FP");
 
-typedef moment<volScalarField, extendedVolScalarNode> volUnivariateMoment;
 
-typedef moment<surfaceScalarField, extendedSurfaceScalarNode> 
-    surfaceUnivariateMoment;
+    // Constructors
+
+        //- Construct from components
+        FP(const dictionary& dict);
+
+
+    //- Destructor
+    virtual ~FP();
+
+
+    // Member Functions
+
+        //- Mixing kernel
+        virtual tmp<fvScalarMatrix> Km
+        (
+            const labelList& order,
+            const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
+        );
+
+};
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace mixingKernels
+} // End namespace mixingSubModels
 } // End namespace Foam
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -21,49 +21,39 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    Foam::moments
-
-Description
-
-SourceFiles
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef moments_H
-#define moments_H
+#include "mixingKernel.H"
 
-#include "volFields.H"
-#include "quadratureNodes.H"
-#include "moment.H"
+// * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
+Foam::autoPtr<Foam::mixingSubModels::mixingKernel>
+Foam::mixingSubModels::mixingKernel::New
+(
+    const dictionary& dict
+)
 {
-  
-typedef moment<volScalarField, basicVolScalarNode> basicVolUnivariateMoment;
+    word mixingKernelType(dict.lookup("mixingKernel"));
 
-typedef moment<surfaceScalarField, basicSurfaceScalarNode>
-    basicSurfaceUnivariateMoment;
+    Info<< "Selecting mixingKernel "
+        << mixingKernelType << endl;
 
-typedef moment<volScalarField, basicVolVectorNode> basicVolVectorMoment;
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(mixingKernelType);
 
-typedef moment<surfaceScalarField, basicSurfaceVectorNode>
-    basicSurfaceVectorMoment;
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalError
+            << "mixingKernel::New(const dictionary&) : " << endl
+            << "    unknown mixingKernelType type "
+            << mixingKernelType
+            << ", constructor not in hash table" << endl << endl
+            << "    Valid mixingKernelType types are :" << endl;
+        Info<< dictionaryConstructorTablePtr_->sortedToc() << abort(FatalError);
+    }
 
-typedef moment<volScalarField, extendedVolScalarNode> volUnivariateMoment;
+    return autoPtr<mixingKernel>(cstrIter()(dict));
+}
 
-typedef moment<surfaceScalarField, extendedSurfaceScalarNode> 
-    surfaceUnivariateMoment;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
 
 // ************************************************************************* //

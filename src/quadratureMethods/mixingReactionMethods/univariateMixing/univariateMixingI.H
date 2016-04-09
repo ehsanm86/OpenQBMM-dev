@@ -22,48 +22,53 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::moments
+    Foam::univariateMixingI
 
 Description
+    Solve a univariate mixing equation with the extended quadrature
+    method of moments.
 
 SourceFiles
+    univariateMixing.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef moments_H
-#define moments_H
 
-#include "volFields.H"
-#include "quadratureNodes.H"
-#include "moment.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * Memeber Functon Declaration * * * * * * * * * * * //
 
-namespace Foam
+//- Constant Access to Concentration A
+const Foam::volScalarField& 
+Foam::univariateMixing::Ca() const
 {
-  
-typedef moment<volScalarField, basicVolScalarNode> basicVolUnivariateMoment;
+    return Ca_;
+}
 
-typedef moment<surfaceScalarField, basicSurfaceScalarNode>
-    basicSurfaceUnivariateMoment;
+//- Constant Access to Concentration B
+const Foam::volScalarField& 
+Foam::univariateMixing::Cb() const
+{
+    return Cb_;
+}
 
-typedef moment<volScalarField, basicVolVectorNode> basicVolVectorMoment;
+//- Constant Access to Concentration R
+const Foam::volScalarField& 
+Foam::univariateMixing::Cr() const
+{
+    return Cr_;
+}
 
-typedef moment<surfaceScalarField, basicSurfaceVectorNode>
-    basicSurfaceVectorMoment;
+//- Constant Access to Concentration S
+const Foam::volScalarField& 
+Foam::univariateMixing::Cs() const
+{
+    return Cs_;
+}
 
-typedef moment<volScalarField, extendedVolScalarNode> volUnivariateMoment;
-
-typedef moment<surfaceScalarField, extendedSurfaceScalarNode> 
-    surfaceUnivariateMoment;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
-
+//- Constant Access to nodes
+const Foam::PtrList<Foam::basicVolVectorNode>& 
+Foam::univariateMixing::nodes() const
+{
+    return nodes_();
+}
 // ************************************************************************* //

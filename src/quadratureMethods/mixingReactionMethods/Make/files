@@ -1,0 +1,14 @@
+mixingReactionSubModels/mixingKernels/mixingKernel/mixingKernel.C
+mixingReactionSubModels/mixingKernels/mixingKernel/newMixingKernel.C
+mixingReactionSubModels/mixingKernels/IEM/IEM.C
+mixingReactionSubModels/mixingKernels/FP/FP.C
+
+mixingReactionSubModels/reactionKernels/reactionKernel/reactionKernel.C
+mixingReactionSubModels/reactionKernels/reactionKernel/newReactionKernel.C
+mixingReactionSubModels/reactionKernels/competitiveConsecutive/competitiveConsecutive.C
+mixingReactionSubModels/reactionKernels/fastCompetitiveConsecutive/fastCompetitiveConsecutive.C
+mixingReactionSubModels/reactionKernels/oneStep/oneStep.C
+
+univariateMixing/univariateMixing.C
+
+LIB = $(FOAM_USER_LIBBIN)/libmixingReaction

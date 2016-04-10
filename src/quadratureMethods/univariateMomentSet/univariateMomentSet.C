@@ -232,6 +232,7 @@ void Foam::univariateMomentSet::checkRealizability()
         (
             "Foam::univariateMomentSet::checkRealizability()\n"
         )   << "The zero-order moment is negative."
+	    << "moments=" << (*this)
             << abort(FatalError);
     }
 
@@ -404,6 +405,7 @@ void Foam::univariateMomentSet::checkRealizability()
         (
             "Foam::univariateMomentSet::checkRealizability()\n"
         )   << "Moment set with only one realizable moment."
+            << "moments=" << (*this)
             << abort(FatalError);
     }
 

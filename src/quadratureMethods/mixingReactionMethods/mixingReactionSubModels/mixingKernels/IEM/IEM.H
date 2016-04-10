@@ -85,8 +85,8 @@ public:
         //- Mixing kernel
         virtual tmp<fvScalarMatrix> Km
         (
-            const labelList& order,
-            const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
+            const basicVolUnivariateMoment& moment,
+            const momentFieldSet<basicVolUnivariateMoment,basicVolScalarNode>& moments
         );
 
 };

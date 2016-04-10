@@ -37,7 +37,6 @@ SourceFiles
 #define univariateMixing_H
 
 #include "mixingKernel.H"
-#include "reactionKernel.H"
 #include "diffusionModel.H"
 #include "univariateMomentSet.H"
 #include "fvCFD.H"
@@ -72,19 +71,19 @@ class univariateMixing
         const fvMesh& mesh_;
 
         //- AutoPtr to the PtrList of quadrature nodes
-        autoPtr<PtrList<basicVolVectorNode> > nodes_;
+        autoPtr<PtrList<basicVolScalarNode> > nodes_;
 
         //- List of moments
-        momentFieldSet<basicVolVectorMoment, basicVolVectorNode> moments_;
+        momentFieldSet<basicVolUnivariateMoment, basicVolScalarNode> moments_;
         
         //- Number of primary quadrature nodes
         label nPrimaryNodes_;
         
         //- List of interpolated nodes (neighbour)
-        autoPtr<PtrList<basicSurfaceVectorNode> > nodesNei_;
+        autoPtr<PtrList<basicSurfaceScalarNode> > nodesNei_;
         
         //- List of interpolated nodes (owner)
-        autoPtr<PtrList<basicSurfaceVectorNode> > nodesOwn_;
+        autoPtr<PtrList<basicSurfaceScalarNode> > nodesOwn_;
         
         //- Dimensionality of the distribution function
         const label nDimensions_;
@@ -93,19 +92,16 @@ class univariateMixing
         const label nMoments_;
         
         //- List of interpolated moments (neighbour)
-        momentFieldSet<basicSurfaceVectorMoment, basicSurfaceVectorNode> momentsNei_;
+        momentFieldSet<basicSurfaceUnivariateMoment, basicSurfaceScalarNode> momentsNei_;
 
         //- List of interpolated moments (owner)
-        momentFieldSet<basicSurfaceVectorMoment, basicSurfaceVectorNode> momentsOwn_;
+        momentFieldSet<basicSurfaceUnivariateMoment, basicSurfaceScalarNode> momentsOwn_;
         
         //- Support of the distribution function
         word support_;
         
         //- Switch indicating the status of the mixing model
         Switch mixing_;
-        
-        // Switch indicating the status of the reaction model
-        Switch reaction_;
         
         //- Concentration A
         volScalarField Ca_;
@@ -125,12 +121,6 @@ class univariateMixing
             Foam::mixingSubModels::mixingKernel
         > mixingKernel_;
         
-        //- reaction kernel model
-        autoPtr
-        <
-            Foam::reactionSubModels::reactionKernel
-        > reactionKernel_;
-        
         //- Diffusion model
         autoPtr
         <
@@ -143,26 +133,10 @@ class univariateMixing
         void interpolateNodes();
         
         //- Update quadrature nodes on fixed-value boundaries
-        void updateBoundaryQuadrature
-        (
-            const momentFieldSet
-            <
-                basicVolVectorMoment,
-                basicVolVectorNode
-            >& moments,
-            PtrList<basicVolVectorNode>& nodes
-        );
+        void updateBoundaryQuadrature();
         
         //- Recalculate the quadrature nodes from the moments
-        void updateQuadrature
-        (
-            const momentFieldSet
-            <
-                basicVolVectorMoment,
-                basicVolVectorNode
-            >& moments,
-            PtrList<basicVolVectorNode>& nodes
-        );
+        void updateQuadrature();
         
         //- Update fields required to compute kinetic fluxes
         void updateAdvection
@@ -174,7 +148,7 @@ class univariateMixing
         //- Calculate explicit advection term 
         tmp<volScalarField> advectMoment
         (
-            const basicVolVectorMoment& moment,
+            const basicVolUnivariateMoment& moment,
             const surfaceScalarField& phiOwn,
             const surfaceScalarField& phiNei
         );
@@ -182,15 +156,8 @@ class univariateMixing
         //- Calculate mixing source terms
         tmp<fvScalarMatrix> mixingSource
         (
-            const basicVolVectorMoment& moment,
-            const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
-        );
-        
-        //- Calculate reaction source terms
-        tmp<volScalarField> reactionSource
-        (
-            const basicVolVectorMoment& moment,
-            const PtrList<basicVolVectorNode>& nodes
+            const basicVolUnivariateMoment& moment,
+            const momentFieldSet<basicVolUnivariateMoment,basicVolScalarNode>& moments
         );
 
 protected:
@@ -253,7 +220,7 @@ public:
         inline const volScalarField& Cs() const;
         
         //- Constant Access to nodes
-        inline const PtrList<basicVolVectorNode>& nodes() const;
+        inline const PtrList<basicVolScalarNode>& nodes() const;
         
         //- Solve univariate mixing equation
         void solve();

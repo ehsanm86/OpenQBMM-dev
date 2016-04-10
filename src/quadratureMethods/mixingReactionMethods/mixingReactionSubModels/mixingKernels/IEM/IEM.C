@@ -72,46 +72,44 @@ Foam::mixingSubModels::mixingKernels::IEM::~IEM()
 Foam::tmp<Foam::fvScalarMatrix>
 Foam::mixingSubModels::mixingKernels::IEM::Km
 (
-    const labelList& order,
-    const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
+    const basicVolUnivariateMoment& moment,
+    const momentFieldSet<basicVolUnivariateMoment,basicVolScalarNode>& moments
 )
 {
-    label a = order[0];
-    label b = order[1];
-    label c = order[2];
-    
     //incompressibleSolver
-//     const incompressible::turbulenceModel& fluidTurb =
-//         moments(0,0,0).mesh().lookupObject<incompressible::turbulenceModel>
-//         (
-//             turbulenceModel::propertiesName
-//         );
-    // compressibleSolver
-    const compressible::turbulenceModel& fluidTurb =
-        moments(0,0,0).mesh().lookupObject<compressible::turbulenceModel>
+    const incompressible::turbulenceModel& fluidTurb =
+        moment.mesh().lookupObject<incompressible::turbulenceModel>
         (
             turbulenceModel::propertiesName
         );
+    // compressibleSolver
+//     const compressible::turbulenceModel& fluidTurb =
+//         moment.mesh().lookupObject<compressible::turbulenceModel>
+//         (
+//             turbulenceModel::propertiesName
+//         );
+        
+    label order = moment.order();
     
     tmp<fvScalarMatrix> IEMK
     (
         new fvScalarMatrix
         (
-            moments(a,b,c),
-            moments(a,b,c).dimensions()*dimVol/dimTime
+            moment,
+            moment.dimensions()*dimVol/dimTime
         )
     );
 
-    if (a == 0)
+    if (order == 0)
     {
         return IEMK;
     }
     else
     {
-        IEMK.ref() += Cphi_*scalar(a)*fluidTurb.epsilon()/fluidTurb.k()
-            *(moments(a-1,b,c)*moments(1,0,0))
-            - fvm::SuSp(Cphi_*scalar(a)*fluidTurb.epsilon()
-            /fluidTurb.k(), moments(a,b,c));
+        IEMK.ref() += Cphi_*order*fluidTurb.epsilon()/fluidTurb.k()
+            *(moments[order-1]*moments[1])
+            - fvm::SuSp(Cphi_*order*fluidTurb.epsilon()
+            /fluidTurb.k(), moment);
         
         return IEMK;
     }

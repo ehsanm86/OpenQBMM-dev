@@ -1,7 +1,6 @@
 mixingReactionSubModels/mixingKernels/mixingKernel/mixingKernel.C
 mixingReactionSubModels/mixingKernels/mixingKernel/newMixingKernel.C
 mixingReactionSubModels/mixingKernels/IEM/IEM.C
-mixingReactionSubModels/mixingKernels/FP/FP.C
 
 mixingReactionSubModels/reactionKernels/reactionKernel/reactionKernel.C
 mixingReactionSubModels/reactionKernels/reactionKernel/newReactionKernel.C

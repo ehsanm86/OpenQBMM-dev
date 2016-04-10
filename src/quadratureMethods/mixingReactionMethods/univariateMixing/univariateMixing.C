@@ -64,7 +64,7 @@ Foam::univariateMixing::univariateMixing
     nPrimaryNodes_(0),
     nodesNei_(),
     nodesOwn_(),
-    nDimensions_(3),                 
+    nDimensions_(1),                 
     nMoments_(moments_.size()),
     momentsNei_
     (
@@ -76,8 +76,6 @@ Foam::univariateMixing::univariateMixing
     ),
     support_(support),
     mixing_(dict.lookup("mixing")),
-    reaction_(dict.lookup("reaction")),
-    
     Ca_
     (
         Foam::IOobject
@@ -91,7 +89,6 @@ Foam::univariateMixing::univariateMixing
         U.mesh(),
         dimensionedScalar("Ca", dimless, 0.0)
     ),
-    
     Cb_
     (
         Foam::IOobject
@@ -105,7 +102,6 @@ Foam::univariateMixing::univariateMixing
         U.mesh(),
         dimensionedScalar("Cb", dimless, 0.0)
     ),
-    
     Cr_
     (
         Foam::IOobject
@@ -119,7 +115,6 @@ Foam::univariateMixing::univariateMixing
         U.mesh(),
         dimensionedScalar("Cr", dimless, 0.0)
     ),
-    
     Cs_
     (
         Foam::IOobject
@@ -133,7 +128,6 @@ Foam::univariateMixing::univariateMixing
         U.mesh(),
         dimensionedScalar("Cs", dimless, 0.0)
     ),
-    
     mixingKernel_
     (
         Foam::mixingSubModels::mixingKernel::New
@@ -141,15 +135,6 @@ Foam::univariateMixing::univariateMixing
             dict.subDict("mixingKernel")
         )
     ),
-    
-    reactionKernel_
-    (
-        Foam::reactionSubModels::reactionKernel::New
-        (
-            dict.subDict("reactionKernel")
-        )
-    ),
-    
     diffusionModel_
     (
         Foam::populationBalanceSubModels::diffusionModel::New
@@ -161,12 +146,12 @@ Foam::univariateMixing::univariateMixing
     phi_(phi)
 {
     // Allocating nodes
-    nodes_ = autoPtr<PtrList<basicVolVectorNode> >
+    nodes_ = autoPtr<PtrList<basicVolScalarNode> >
     (
-        new PtrList<basicVolVectorNode>
+        new PtrList<basicVolScalarNode>
         (
             lookup("nodes"), 
-            Foam::basicVolVectorNode::iNew
+            Foam::basicVolScalarNode::iNew
             (
                 name_,
                 mesh_,
@@ -179,29 +164,29 @@ Foam::univariateMixing::univariateMixing
    
     nPrimaryNodes_ = nodes_().size();
     
-    nodesNei_ = autoPtr<PtrList<basicSurfaceVectorNode> >
+    nodesNei_ = autoPtr<PtrList<basicSurfaceScalarNode> >
     (
-        new PtrList<basicSurfaceVectorNode>(nPrimaryNodes_)
+        new PtrList<basicSurfaceScalarNode>(nPrimaryNodes_)
     );
     
-    nodesOwn_ = autoPtr<PtrList<basicSurfaceVectorNode> >
+    nodesOwn_ = autoPtr<PtrList<basicSurfaceScalarNode> >
     (
-        new PtrList<basicSurfaceVectorNode>(nPrimaryNodes_)
+        new PtrList<basicSurfaceScalarNode>(nPrimaryNodes_)
     );
     
-    PtrList<basicVolVectorNode>& nodes = nodes_();
-    PtrList<basicSurfaceVectorNode>& nodesNei = nodesNei_();
-    PtrList<basicSurfaceVectorNode>& nodesOwn = nodesOwn_();
+    PtrList<basicVolScalarNode>& nodes = nodes_();
+    PtrList<basicSurfaceScalarNode>& nodesNei = nodesNei_();
+    PtrList<basicSurfaceScalarNode>& nodesOwn = nodesOwn_();
 
     // Populating interpolated nodes.
     forAll(nodes, pNodeI)
     {
-        basicVolVectorNode& node(nodes[pNodeI]);
+        basicVolScalarNode& node(nodes[pNodeI]);
               
         nodesNei.set
         (
             pNodeI,
-            new basicSurfaceVectorNode
+            new basicSurfaceScalarNode
             (
                 node.name() + "Nei",
                 name_,
@@ -214,7 +199,7 @@ Foam::univariateMixing::univariateMixing
         nodesOwn.set
         (
             pNodeI,
-            new basicSurfaceVectorNode
+            new basicSurfaceScalarNode
             (
                 node.name() + "Own",
                 name_,
@@ -231,7 +216,7 @@ Foam::univariateMixing::univariateMixing
         momentsNei_.set
         (
             mI,
-            new Foam::basicSurfaceVectorMoment
+            new Foam::basicSurfaceUnivariateMoment
             (
                 name_,
                 moments_[mI].cmptOrders(),
@@ -243,7 +228,7 @@ Foam::univariateMixing::univariateMixing
         momentsOwn_.set
         (
             mI,
-            new Foam::basicSurfaceVectorMoment
+            new Foam::basicSurfaceUnivariateMoment
             (
                 name_,
                 moments_[mI].cmptOrders(),
@@ -253,13 +238,11 @@ Foam::univariateMixing::univariateMixing
         );
     }
     
-    updateQuadrature(moments_, nodes_());
+    updateQuadrature();
     interpolateNodes();
-    updateBoundaryQuadrature(moments_, nodes_());
-    
+    updateBoundaryQuadrature();
     momentsNei_.update();
     momentsOwn_.update();
-    reactionKernel_->updateConcentrations(Ca_, Cb_, Cr_, Cs_, moments_);
 }
 
 
@@ -296,15 +279,15 @@ void Foam::univariateMixing::interpolateNodes()
         dimensionedScalar("own", dimless, 1.0)
     );
     
-    const PtrList<basicVolVectorNode>& nodes = nodes_();
-    PtrList<basicSurfaceVectorNode>& nodesNei = nodesNei_();
-    PtrList<basicSurfaceVectorNode>& nodesOwn = nodesOwn_();
+    const PtrList<basicVolScalarNode>& nodes = nodes_();
+    PtrList<basicSurfaceScalarNode>& nodesOwn = nodesOwn_();
+    PtrList<basicSurfaceScalarNode>& nodesNei = nodesNei_();
         
     forAll(nodes, pNodeI)
     {
-        const basicVolVectorNode& node(nodes[pNodeI]);
-        basicSurfaceVectorNode& nodeOwn(nodesOwn[pNodeI]);
-        basicSurfaceVectorNode& nodeNei(nodesNei[pNodeI]);
+        const basicVolScalarNode& node(nodes[pNodeI]);
+        basicSurfaceScalarNode& nodeOwn(nodesOwn[pNodeI]);
+        basicSurfaceScalarNode& nodeNei(nodesNei[pNodeI]);
                
         nodeOwn.primaryWeight() = 
             fvc::interpolate
@@ -340,15 +323,7 @@ void Foam::univariateMixing::interpolateNodes()
     }
 }
 
-void Foam::univariateMixing::updateBoundaryQuadrature
-(
-    const momentFieldSet
-    <
-        basicVolVectorMoment,
-        basicVolVectorNode
-    >& moments,
-    PtrList<basicVolVectorNode>& nodes
-)
+void Foam::univariateMixing::updateBoundaryQuadrature()
 {
     // Recover reference to boundaryField of zero-order moment.
     // All moments will share the same BC types at a given boundary.
@@ -366,17 +341,13 @@ void Foam::univariateMixing::updateBoundaryQuadrature
                 univariateMomentSet momentsToInvert(2.0*nPrimaryNodes_, 0, support_);
 
                 // Copying moments from a face
-                momentsToInvert[0] = 
-                    moments(0,0,0).boundaryField()[patchI][faceI];
+                momentsToInvert[0] = moments_[0].boundaryField()[patchI][faceI];
                     
-                momentsToInvert[1] = 
-                    moments(1,0,0).boundaryField()[patchI][faceI];
+                momentsToInvert[1] = moments_[1].boundaryField()[patchI][faceI];
                     
-                momentsToInvert[2] = 
-                    moments(2,0,0).boundaryField()[patchI][faceI];
+                momentsToInvert[2] = moments_[2].boundaryField()[patchI][faceI];
                     
-                momentsToInvert[3] = 
-                    moments(3,0,0).boundaryField()[patchI][faceI];
+                momentsToInvert[3] = moments_[3].boundaryField()[patchI][faceI];
 
                 // Inverting moments
                 momentsToInvert.invert();
@@ -392,95 +363,37 @@ void Foam::univariateMixing::updateBoundaryQuadrature
                     momentsToInvert.abscissae()
                 );
                 
-                if (momentsToInvert.isDegenerate())
+                // Copying quadrature data to boundary face
+                for (label pNodeI = 0; pNodeI < nPrimaryNodes_; pNodeI++)
                 {
-                    basicVolVectorNode& node = nodes[0];
+                    basicVolScalarNode& node = nodes_()[pNodeI];
                     
                     node.primaryWeight().boundaryField()[patchI][faceI] =
-                            pWeights[0];
-                
-                    node.primaryAbscissa().boundaryField()[patchI][faceI].component(0) =
-                        pAbscissae[0];
-                        
-                    node.primaryAbscissa().boundaryField()[patchI][faceI].component(1) =
-                        scalar(0.0);
-                        
-                    node.primaryAbscissa().boundaryField()[patchI][faceI].component(2) =
-                        scalar(0.0);
-                }
-                else
-                {
-                    // Copying quadrature data to boundary face
-                    for (label pNodeI = 0; pNodeI < nPrimaryNodes_; pNodeI++)
-                    {
-                        basicVolVectorNode& node = nodes[pNodeI];
-                        
-                        node.primaryWeight().boundaryField()[patchI][faceI] =
-                            pWeights[pNodeI];
-                
-                        node.primaryAbscissa().boundaryField()[patchI][faceI].component(0) =
-                            pAbscissae[pNodeI];
-                    }
-
-                    // Calculate conditional abscissa for reaction
-                    if (reaction_)
-                    {
-                        basicVolVectorNode& node0 = nodes[0];
-                        
-                        Foam::vector& abscissa0 =
-                            node0.primaryAbscissa().boundaryField()[patchI][faceI];
-                            
-                        basicVolVectorNode& node1 = nodes[1];
-                        
-                        Foam::vector& abscissa1 =
-                            node1.primaryAbscissa().boundaryField()[patchI][faceI];
-                        
-                        abscissa0.component(1) = (pAbscissae[1]
-                          *moments(0,1,0).boundaryField()[patchI][faceI] 
-                          - moments(1,1,0).boundaryField()[patchI][faceI])
-                          /max((pWeights[0]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                            
-                        abscissa1.component(1) = (-pAbscissae[0]
-                          *moments(0,1,0).boundaryField()[patchI][faceI] 
-                          + moments(1,1,0).boundaryField()[patchI][faceI])
-                          /max((pWeights[1]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                            
-                        abscissa0.component(2) = (pAbscissae[1]
-                          *moments(0,0,1).boundaryField()[patchI][faceI] 
-                          - moments(1,0,1).boundaryField()[patchI][faceI])
-                          /max((pWeights[0]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                            
-                        abscissa1.component(2) = (-pAbscissae[0]
-                          *moments(0,0,1).boundaryField()[patchI][faceI] 
-                          + moments(1,0,1).boundaryField()[patchI][faceI])
-                          /max((pWeights[1]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                    }
+                        pWeights[pNodeI];
+            
+                    node.primaryAbscissa().boundaryField()[patchI][faceI] =
+                        pAbscissae[pNodeI];
                 }
             }
         }
     } 
 }
 
-void Foam::univariateMixing::updateQuadrature
-(
-    const momentFieldSet
-    <
-        basicVolVectorMoment,
-        basicVolVectorNode
-    >& moments,
-    PtrList<basicVolVectorNode>& nodes
-)
+void Foam::univariateMixing::updateQuadrature()
 {
-    const volScalarField& m0(moments(0,0,0));
+    const volScalarField& m0(moments_[0]);
+    
+    PtrList<basicVolScalarNode>& nodes(nodes_());
+    
     forAll(m0, cellI)
     {
         univariateMomentSet momentsToInvert(2.0*nPrimaryNodes_, 0, support_);
 
         // Copying moment set from a cell to univariateMomentSet
-        momentsToInvert[0] = moments(0,0,0)[cellI];
-        momentsToInvert[1] = moments(1,0,0)[cellI];
-        momentsToInvert[2] = moments(2,0,0)[cellI];
-        momentsToInvert[3] = moments(3,0,0)[cellI];
+        momentsToInvert[0] = moments_[0][cellI];
+        momentsToInvert[1] = moments_[1][cellI];
+        momentsToInvert[2] = moments_[2][cellI];
+        momentsToInvert[3] = moments_[3][cellI];
         
         // Inverting moments
         momentsToInvert.invert();
@@ -496,70 +409,26 @@ void Foam::univariateMixing::updateQuadrature
             momentsToInvert.abscissae()
         );
         
-//         Info << "weights=" << pWeights << endl;
-//         Info << "abscissae=" << pAbscissae << endl;
-        
-        if (momentsToInvert.isDegenerate())
+        // Copying to fields
+        for (label pNodeI = 0; pNodeI < nPrimaryNodes_; pNodeI++)
         {
-            basicVolVectorNode& node = nodes[0];
-            node.primaryWeight()[cellI] = pWeights[0];
-            node.primaryAbscissa()[cellI].component(0) = pAbscissae[0];
-            node.primaryAbscissa()[cellI].component(1) = scalar(0);
-            node.primaryAbscissa()[cellI].component(2) = scalar(0);
-        }
-        else
-        {
-            // Copying to fields
-            for (label pNodeI = 0; pNodeI < nPrimaryNodes_; pNodeI++)
-            {
-                basicVolVectorNode& node = nodes[pNodeI];
+            basicVolScalarNode& node(nodes[pNodeI]);
 
-                // Copy primary node
-                node.primaryWeight()[cellI] = pWeights[pNodeI];
-                node.primaryAbscissa()[cellI].component(0) = pAbscissae[pNodeI];
-            }
-        
-            // Calculate conditional abscissa for reaction
-            if (reaction_)
-            {
-                basicVolVectorNode& node0 = nodes[0];
-                Foam::vector& abscissa0 = node0.primaryAbscissa()[cellI];
-                
-                basicVolVectorNode& node1 = nodes[1];
-                Foam::vector& abscissa1 = node1.primaryAbscissa()[cellI];
-                
-                abscissa0.component(1) =
-                    (pAbscissae[1]*moments(0,1,0)[cellI]
-                  - moments(1,1,0)[cellI])
-                  /max((pWeights[0]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                    
-                abscissa1.component(1) =
-                    (-pAbscissae[0]*moments(0,1,0)[cellI] 
-                  + moments(1,1,0)[cellI])
-                  /max((pWeights[1]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                    
-                abscissa0.component(2) =
-                    (pAbscissae[1]*moments(0,0,1)[cellI] 
-                  - moments(1,0,1)[cellI])
-                  /max((pWeights[0]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-                    
-                abscissa1.component(2) =
-                    (-pAbscissae[0]*moments(0,0,1)[cellI] 
-                  + moments(1,0,1)[cellI])
-                  /max((pWeights[1]*(pAbscissae[1] - pAbscissae[0])),1e-12);
-            }
+            // Copy primary node
+            node.primaryWeight()[cellI] = pWeights[pNodeI];
+            node.primaryAbscissa()[cellI] = pAbscissae[pNodeI];
         }
     }
 
     // Updating boundary conditions
     forAll(nodes, pNodeI)
     {
-        basicVolVectorNode& pNode(nodes[pNodeI]);
+        basicVolScalarNode& pNode(nodes[pNodeI]);
         pNode.primaryWeight().correctBoundaryConditions();
         pNode.primaryAbscissa().correctBoundaryConditions();
     }
     
-    updateBoundaryQuadrature(moments, nodes);
+    updateBoundaryQuadrature();
     moments_.update();
 }
 
@@ -607,7 +476,7 @@ void Foam::univariateMixing::updateAdvection
 Foam::tmp<Foam::volScalarField>
 Foam::univariateMixing::advectMoment
 (
-    const basicVolVectorMoment& moment,
+    const basicVolUnivariateMoment& moment,
     const surfaceScalarField& phiOwn,
     const surfaceScalarField& phiNei
 )
@@ -632,16 +501,12 @@ Foam::univariateMixing::advectMoment
         )
     );
     
-    const labelList& order = moment.cmptOrders();
-    
-    label a = order[0];
-    label b = order[1];
-    label c = order[2];
+    label order = moment.order();
     
     surfaceScalarField mFlux
     (   
-        momentsNei_(a,b,c)*min(phiNei, zeroPhi) 
-      + momentsOwn_(a,b,c)*max(phiOwn, zeroPhi)
+        momentsNei_[order]*min(phiNei, zeroPhi) 
+      + momentsOwn_[order]*max(phiOwn, zeroPhi)
     );
  
     fvc::surfaceIntegrate(divMoment.ref(), mFlux);
@@ -653,133 +518,11 @@ Foam::univariateMixing::advectMoment
 Foam::tmp<Foam::fvScalarMatrix>
 Foam::univariateMixing::mixingSource
 (
-    const basicVolVectorMoment& moment,
-    const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
+    const basicVolUnivariateMoment& moment,
+    const momentFieldSet<basicVolUnivariateMoment,basicVolScalarNode>& moments_
 )
 {
-    return mixingKernel_->Km(moment.cmptOrders(), moments);
-}
-
-Foam::tmp<Foam::volScalarField>
-Foam::univariateMixing::reactionSource
-(
-    const basicVolVectorMoment& moment,
-    const PtrList<basicVolVectorNode>& nodes
-)
-{
-    tmp<volScalarField> rSource
-    (
-        new volScalarField
-        (
-            IOobject
-            (
-                "rSource",
-                U_.mesh().time().timeName(),
-                U_.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE,
-                false
-            ),
-            U_.mesh(),
-            dimensionedScalar("zero", moment.dimensions()/dimTime, 0.0)
-        )
-    );
-
-    if (!reaction_)
-    {
-        rSource.ref().dimensions().reset(moment.dimensions()/dimTime);
-        return rSource;
-    }
-    
-    volScalarField& reactionSource = rSource.ref();
-    
-    const labelList& order = moment.cmptOrders();
-    label a = order[0];
-    label b = order[1];
-    label c = order[2];
-    
-    // Set pointer lists so quadrature can be run in loop
-    const basicVolVectorNode& node0 = nodes[0];
-    const basicVolVectorNode& node1 = nodes[1];
-    
-    PtrList<volScalarField> primaryAbscissa(2);
-    primaryAbscissa.set(0, node0.primaryAbscissa().component(0));
-    primaryAbscissa.set(1, node1.primaryAbscissa().component(0));
-    
-    PtrList<volScalarField> Y1(2);
-    Y1.set(0, node0.primaryAbscissa().component(1));
-    Y1.set(1, node1.primaryAbscissa().component(1));
-    
-    PtrList<volScalarField> Y2(2);
-    Y2.set(0, node0.primaryAbscissa().component(2));
-    Y2.set(1, node1.primaryAbscissa().component(2));
-    
-    PtrList<volScalarField> primaryWeight(2);
-    primaryWeight.set(0, node0.primaryWeight());
-    primaryWeight.set(1, node1.primaryWeight());
-    
-    // Compute the reaction kernel
-    for (label nodeI = 0; nodeI < nPrimaryNodes_; nodeI++)
-    {
-        reactionSource == reactionSource
-            + primaryWeight[nodeI]*reactionKernel_->R1
-            (
-                primaryAbscissa[nodeI],
-                Y1[nodeI],
-                Y2[nodeI]
-            )*scalar(b)*pow(primaryAbscissa[nodeI], scalar(a));
-
-        reactionSource == reactionSource
-            + primaryWeight[nodeI]*reactionKernel_->R2
-            (
-                primaryAbscissa[nodeI],
-                Y1[nodeI],
-                Y2[nodeI]
-            )*scalar(c)*pow(primaryAbscissa[nodeI], scalar(a));
-    }
-    
-//     forAll(reactionSource, cellI)
-//     {
-//         if (Cb_[cellI] < 1.0e-5)
-//         {
-//             reactionSource[cellI] = scalar(0);
-//         }
-//         
-//         if (Ca_[cellI] < 1.0e-5)
-//         {
-//             reactionSource[cellI] = scalar(0);
-//         }
-//         
-//         if (Foam::mag(primaryAbscissa[1][cellI]-primaryAbscissa[0][cellI]) < 1.0e-4)
-//         {
-//             reactionSource[cellI] = scalar(0);
-//         }
-//     }
-
-//         forAll(reactionSource, cellI)
-//     {
-//         if (Ca_[cellI] < 0.0)
-//         {
-//             reactionSource[cellI] = scalar(0);
-//             
-//             FatalErrorIn
-//         (
-//             "Foam::mixingReaction\n"
-//         )
-//             << "momentsOrder=" << moment.cmptOrders()
-//             << "moment=" << moment[cellI]
-//             << "primaryAbscissae=" << primaryAbscissa[0][cellI]
-//             << "primaryAbscissae=" << primaryAbscissa[1][cellI]
-//             << "primaryWeight=" << primaryWeight[0][cellI]
-//             << "primaryWeight=" << primaryWeight[1][cellI]
-//             << "reactionSource=" << reactionSource[cellI]
-//             << "cellI=" << cellI
-//             << abort(FatalError);
-//         }
-//     }
-    rSource.ref().dimensions().reset(moment.dimensions()/dimTime);
-    
-    return rSource;
+    return mixingKernel_->Km(moment, moments_);
 }
 
 void Foam::univariateMixing::solve()
@@ -793,7 +536,7 @@ void Foam::univariateMixing::solve()
     
     forAll(moments_, mI)
     {
-        basicVolVectorMoment& m = moments_[mI];
+        basicVolUnivariateMoment& m = moments_[mI];
         
         momentEqns.set
         (
@@ -805,7 +548,6 @@ void Foam::univariateMixing::solve()
               - diffusionModel_->momentDiff(m)
               ==
                 mixingSource(m,moments_)
-              + reactionSource(m, nodes_)
             )
         );
     }
@@ -816,14 +558,12 @@ void Foam::univariateMixing::solve()
         momentEqns[mEqnI].solve();
     }
     
-    updateQuadrature(moments_, nodes_());
-    
-    reactionKernel_->updateConcentrations(Ca_, Cb_, Cr_, Cs_, moments_);
+    updateQuadrature();
     
     if (U_.mesh().time().outputTime() )
     {
-        const basicVolVectorNode& node0 = nodes_()[0];
-        const basicVolVectorNode& node1 = nodes_()[1];
+        const basicVolScalarNode& node0 = nodes_()[0];
+        const basicVolScalarNode& node1 = nodes_()[1];
         node0.primaryAbscissa().write();
         node0.primaryWeight().write();
         node1.primaryAbscissa().write();

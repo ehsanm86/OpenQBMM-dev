@@ -85,7 +85,7 @@ public:
         virtual tmp<fvScalarMatrix> Km
         (
             const labelList& order,
-            const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
+            const momentFieldSet<basicVolUnivariateMoment,basicVolScalarNode>& moments
         );
 
 };

@@ -66,7 +66,7 @@ Foam::univariateMixing::Cs() const
 }
 
 //- Constant Access to nodes
-const Foam::PtrList<Foam::basicVolVectorNode>& 
+const Foam::PtrList<Foam::basicVolScalarNode>& 
 Foam::univariateMixing::nodes() const
 {
     return nodes_();

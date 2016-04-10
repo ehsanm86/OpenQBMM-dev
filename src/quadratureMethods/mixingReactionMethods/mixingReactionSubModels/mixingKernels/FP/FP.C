@@ -73,7 +73,7 @@ Foam::tmp<Foam::fvScalarMatrix>
 Foam::mixingSubModels::mixingKernels::FP::Km
 (
     const labelList& order,
-    const momentFieldSet<basicVolVectorMoment,basicVolVectorNode>& moments
+    const momentFieldSet<basicVolUnivariateMoment,basicVolScalarNode>& moments
 )
 {   
     label a = order[0];

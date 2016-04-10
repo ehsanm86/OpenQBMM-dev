@@ -25,43 +25,43 @@ License
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const Foam::PtrList<Foam::extendedVolScalarNode>&
+const Foam::PtrList<Foam::basicVolScalarNode>&
 Foam::univariateQuadratureApproximation::nodes() const
 {
     return nodes_();
 }
 
-const Foam::volUnivariateMomentFieldSet&
+const Foam::basicVolUnivariateMomentFieldSet&
 Foam::univariateQuadratureApproximation::moments() const
 {
     return moments_;
 }
 
-Foam::volUnivariateMomentFieldSet&
+Foam::basicVolUnivariateMomentFieldSet&
 Foam::univariateQuadratureApproximation::moments()
 {
     return moments_;
 }
 
-const Foam::surfaceUnivariateMomentFieldSet&
+const Foam::basicSurfaceUnivariateMomentFieldSet&
 Foam::univariateQuadratureApproximation::momentsNei() const
 {
     return momentsNei_;
 }
 
-Foam::surfaceUnivariateMomentFieldSet&
+Foam::basicSurfaceUnivariateMomentFieldSet&
 Foam::univariateQuadratureApproximation::momentsNei()
 {
     return momentsNei_;
 }
 
-const Foam::surfaceUnivariateMomentFieldSet&
+const Foam::basicSurfaceUnivariateMomentFieldSet&
 Foam::univariateQuadratureApproximation::momentsOwn() const
 {
     return momentsOwn_;
 }
 
-Foam::surfaceUnivariateMomentFieldSet&
+Foam::basicSurfaceUnivariateMomentFieldSet&
 Foam::univariateQuadratureApproximation::momentsOwn()
 {
     return momentsOwn_;

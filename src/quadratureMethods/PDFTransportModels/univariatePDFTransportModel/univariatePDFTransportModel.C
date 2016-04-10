@@ -98,7 +98,7 @@ void Foam::PDFTransportModels::univariatePDFTransportModel
 Foam::tmp<Foam::volScalarField>
 Foam::PDFTransportModels::univariatePDFTransportModel::physicalSpaceConvection
 (
-    const volUnivariateMoment& moment,
+    const basicVolUnivariateMoment& moment,
     const surfaceScalarField& phiOwn,
     const surfaceScalarField& phiNei
 )
@@ -149,7 +149,7 @@ void Foam::PDFTransportModels::univariatePDFTransportModel::solve()
     // Solve moment transport equations
     forAll(quadrature_.moments(), mI)
     {
-        volUnivariateMoment& m = quadrature_.moments()[mI];
+        basicVolUnivariateMoment& m = quadrature_.moments()[mI];
 
         momentEqns.set
         (

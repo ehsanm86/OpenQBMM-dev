@@ -48,6 +48,12 @@ typedef momentFieldSet<volUnivariateMoment, extendedVolScalarNode>
 
 typedef momentFieldSet<surfaceUnivariateMoment, extendedSurfaceScalarNode>
     surfaceUnivariateMomentFieldSet;
+    
+typedef momentFieldSet<basicVolUnivariateMoment, basicVolScalarNode>
+    basicVolUnivariateMomentFieldSet;
+
+typedef momentFieldSet<basicSurfaceUnivariateMoment, basicSurfaceScalarNode>
+    basicSurfaceUnivariateMomentFieldSet;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

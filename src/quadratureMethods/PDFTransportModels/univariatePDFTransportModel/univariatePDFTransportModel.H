@@ -74,7 +74,7 @@ protected:
         //- Diffusion term
         virtual tmp<fvScalarMatrix> momentDiffusion
         (
-            const volUnivariateMoment& moment
+            const basicVolUnivariateMoment& moment
         ) = 0;
 
         //- Update fields required to compute kinetic fluxes
@@ -87,7 +87,7 @@ protected:
         //- Calculate explicit convection term in physical space
         tmp<volScalarField> physicalSpaceConvection
         (
-            const volUnivariateMoment& moment,
+            const basicVolUnivariateMoment& moment,
             const surfaceScalarField& phiOwn,
             const surfaceScalarField& phiNei
         );
@@ -95,13 +95,13 @@ protected:
         //- Convect moments in phase space
         virtual tmp<volScalarField> phaseSpaceConvection
         (
-            const volUnivariateMoment& moment
+            const basicVolUnivariateMoment& moment
         ) = 0;
 
         //- Calculate source terms
         virtual tmp<fvScalarMatrix> momentSource
         (
-            const volUnivariateMoment& moment
+            const basicVolUnivariateMoment& moment
         ) = 0;
 
 

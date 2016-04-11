@@ -404,6 +404,7 @@ void Foam::univariateMomentSet::checkRealizability()
         (
             "Foam::univariateMomentSet::checkRealizability()\n"
         )   << "Moment set with only one realizable moment."
+            << "moments" << (*this)
             << abort(FatalError);
     }
 

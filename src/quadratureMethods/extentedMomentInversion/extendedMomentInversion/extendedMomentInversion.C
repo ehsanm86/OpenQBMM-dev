@@ -96,6 +96,12 @@ void Foam::extendedMomentInversion::invert(const univariateMomentSet& moments)
     }
 
     label nRealizableMoments = m.nRealizableMoments();
+    
+    sigma_ = 0.0;
+    nullSigma_ = true;
+    m.invert();
+    secondaryQuadrature(m);
+    return;
 
     // If the moment set is on the boundary of the moment space, the
     // distribution will be reconstructed by a summation of Dirac delta,

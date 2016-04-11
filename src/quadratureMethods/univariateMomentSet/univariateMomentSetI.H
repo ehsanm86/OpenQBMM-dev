@@ -32,7 +32,7 @@ bool Foam::univariateMomentSet::isDegenerate()
 
     for (label momentI = 1; momentI < nMoments_; momentI++)
     {
-        if ((*this)[momentI] != 0.0)
+        if (mag((*this)[momentI]) > 1.0e-12)
         {
             degenerate_ = false;
 

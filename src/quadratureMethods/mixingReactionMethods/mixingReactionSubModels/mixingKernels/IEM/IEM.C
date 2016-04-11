@@ -81,17 +81,17 @@ Foam::mixingSubModels::mixingKernels::IEM::Km
     label c = order[2];
     
     //incompressibleSolver
-//     const incompressible::turbulenceModel& fluidTurb =
-//         moments(0,0,0).mesh().lookupObject<incompressible::turbulenceModel>
-//         (
-//             turbulenceModel::propertiesName
-//         );
-    // compressibleSolver
-    const compressible::turbulenceModel& fluidTurb =
-        moments(0,0,0).mesh().lookupObject<compressible::turbulenceModel>
+    const incompressible::turbulenceModel& fluidTurb =
+        moments(0,0,0).mesh().lookupObject<incompressible::turbulenceModel>
         (
             turbulenceModel::propertiesName
         );
+    // compressibleSolver
+//     const compressible::turbulenceModel& fluidTurb =
+//         moments(0,0,0).mesh().lookupObject<compressible::turbulenceModel>
+//         (
+//             turbulenceModel::propertiesName
+//         );
     
     tmp<fvScalarMatrix> IEMK
     (

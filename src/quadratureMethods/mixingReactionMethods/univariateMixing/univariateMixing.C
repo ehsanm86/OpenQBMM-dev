@@ -801,7 +801,8 @@ void Foam::univariateMixing::solve()
             new fvScalarMatrix
             (
                 fvm::ddt(m)
-              + advectMoment(m, phiOwn, phiNei)
+              + fvm::div(phi_,m)
+//               + advectMoment(m, phiOwn, phiNei)
               - diffusionModel_->momentDiff(m)
               ==
                 mixingSource(m,moments_)

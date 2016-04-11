@@ -27,6 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "turbulentFluidThermoModel.H"
 #include "fundamentalConstants.H"
+#include "turbulentTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -77,23 +78,31 @@ Foam::mixingSubModels::mixingKernels::IEM::K
     const basicVolUnivariateMomentFieldSet& moments
 ) const
 {
-    typedef compressible::turbulenceModel cmpTurbModel;
+//     typedef compressible::turbulenceModel cmpTurbModel;
+// 
+//     if
+//     (
+//         !moment.mesh().foundObject<cmpTurbModel>
+//         (
+//             cmpTurbModel::propertiesName
+//         )
+//     )
+//     {
+//         FatalErrorInFunction
+//             << "No valid compressible turbulence model found."
+//             << abort(FatalError);
+//     }
 
-    if
-    (
-        !moment.mesh().foundObject<cmpTurbModel>
-        (
-            cmpTurbModel::propertiesName
-        )
-    )
-    {
-        FatalErrorInFunction
-            << "No valid compressible turbulence model found."
-            << abort(FatalError);
-    }
-
-    const compressible::turbulenceModel& flTurb =
-        moment.mesh().lookupObject<compressible::turbulenceModel>
+    //compressible
+//     const compressible::turbulenceModel& flTurb =
+//         moment.mesh().lookupObject<compressible::turbulenceModel>
+//         (
+//             turbulenceModel::propertiesName
+//         );
+    
+    // incompressible
+    const incompressible::turbulenceModel& flTurb =
+        moment.mesh().lookupObject<incompressible::turbulenceModel>
         (
             turbulenceModel::propertiesName
         );

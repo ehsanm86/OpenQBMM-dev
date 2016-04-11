@@ -99,8 +99,8 @@ turbViscosity(const volScalarField& moment) const
                 cmpTurbModel::propertiesName
             );
 
-//         return turb.mut()/turb.rho();
-        return 0.09*sqr(turb.k())/turb.epsilon();
+        return turb.mut()/turb.rho();
+//         return 0.09*sqr(turb.k())/turb.epsilon();
     }
     else if
     (
@@ -113,8 +113,8 @@ turbViscosity(const volScalarField& moment) const
                 icoTurbModel::propertiesName
             );
 
-//         return turb.nut();
-        return 0.09*sqr(turb.k())/turb.epsilon();
+        return turb.nut();
+//         return 0.09*sqr(turb.k())/turb.epsilon();
     }
     else
     {

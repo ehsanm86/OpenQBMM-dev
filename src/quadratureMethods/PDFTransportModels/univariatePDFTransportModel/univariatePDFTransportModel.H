@@ -68,6 +68,9 @@ protected:
 
         //- Velocity field
         const volVectorField& U_;
+        
+        //- Velocity field
+        const surfaceScalarField& phi_;
 
     // Protected member functions
 
@@ -116,6 +119,7 @@ public:
             const dictionary& dict,
             const fvMesh& mesh,
             const volVectorField& U,
+            const surfaceScalarField& phi,
             const word support
         );
 

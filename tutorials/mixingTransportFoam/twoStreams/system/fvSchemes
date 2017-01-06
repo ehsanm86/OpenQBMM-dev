@@ -29,7 +29,7 @@ gradSchemes
 divSchemes
 {
     default             none;
-    div(phi,moment)     upwind;
+    div(phi,moment)     Gauss upwind;
 }
 
 laplacianSchemes

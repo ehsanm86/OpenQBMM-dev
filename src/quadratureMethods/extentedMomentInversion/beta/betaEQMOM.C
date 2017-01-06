@@ -164,6 +164,7 @@ void Foam::betaEQMOM::momentsStarToMoments
                 + 362880.0*momentsStar[1]*sigma))))))))
                 )/factor;
     }
+
 }
 
 void Foam::betaEQMOM::momentsToMomentsStar
@@ -285,6 +286,7 @@ void Foam::betaEQMOM::momentsToMomentsStar
                 *(1.0 + sigma)*moments[3] + sigma*(511.0*(1.0 + sigma)
                 *moments[2] - moments[1]*sigma))))))));
     }
+
 }
 
 Foam::scalar Foam::betaEQMOM::m2N
@@ -343,8 +345,6 @@ Foam::scalar Foam::betaEQMOM::sigmaMax(univariateMomentSet& moments)
 {
     scalar p2 = (moments[0]*moments[2] - sqr(moments[1]))
                 /(moments[0]*moments[1] - sqr(moments[1]));
-
-    //Info << "p2 = " << p2 << endl;
 
     return p2/(1.0 - p2);
 }

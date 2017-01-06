@@ -22,7 +22,7 @@ turbulentMixingCoeffs
     diffusionModel
     {
         diffusionModel  turbulentDiffusion;
-        gammaLam    gammaLam [ 0 2 -1 0 0 0 0 ] 1.0e-6;
+        gammaLam    gammaLam [ 0 2 -1 0 0 0 0 ] 0.0;
         Sc    0.7;
     }
 
@@ -31,8 +31,8 @@ turbulentMixingCoeffs
     mixingKernel
     {
         Cphi          Cphi  [ 0 0 0 0 0 0 0 ] 2.0;
-        c             c     [ 0 0 0 0 0 0 0 ] 1.0;
-        mixingKernel  IEM;
+        c             c     [ 0 0 0 0 0 0 0 ] 10.0;
+        mixingKernel  FokkerPlanck;
     }
 
 }

@@ -194,17 +194,17 @@ void Foam::univariateMomentSet::invert()
             << abort(FatalError);
     }
 
-    if (forceGauss_)
-    {
-        WarningInFunction
-            << "Forcing Gauss quadrature. " << nl
-            << "    Originally requested quadrature type: "
-            << quadratureType_ << nl
-            << "    Number of realizable moments: "
-            << nRealizableMoments_ << nl
-            << "    Moment set: " << (*this)
-            << endl;
-    }
+//     if (forceGauss_)
+//     {
+//         WarningInFunction
+//             << "Forcing Gauss quadrature. " << nl
+//             << "    Originally requested quadrature type: "
+//             << quadratureType_ << nl
+//             << "    Number of realizable moments: "
+//             << nRealizableMoments_ << nl
+//             << "    Moment set: " << (*this)
+//             << endl;
+//     }
 
     if (nInvertibleMoments_ == 2)
     {

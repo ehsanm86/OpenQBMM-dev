@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 {
     Info << "Testing univariateMomentSet\n" << endl;
 
-    label nMoments = 5;
+    label nMoments = 7;
 
     scalarDiagonalMatrix m(nMoments, 0.0);
     // Computing integer moments of a log-normal function
@@ -83,16 +83,16 @@ int main(int argc, char *argv[])
 //     }
 
 // Computing integer moments of a beta function
-    scalar mu = 0.5;
-    scalar sigma = 0.3;
-
-    m[0] = 1.0;
-
-    for (label momenti = 1; momenti < nMoments; momenti++)
-    {
-        m[momenti] = (mu + (momenti - 1.0)*sigma)*m[momenti-1]
-            /(1.0 + (momenti - 1.0)*sigma);
-    }
+//     scalar mu = 0.5;
+//     scalar sigma = 0.3;
+//
+//     m[0] = 1.0;
+//
+//     for (label momenti = 1; momenti < nMoments; momenti++)
+//     {
+//         m[momenti] = (mu + (momenti - 1.0)*sigma)*m[momenti-1]
+//             /(1.0 + (momenti - 1.0)*sigma);
+//     }
 
 
 
@@ -100,15 +100,39 @@ int main(int argc, char *argv[])
 //    m[1] = 0.0;
 
 //     m[0] = 1;
-//     m[1] = 0.000205634192732;
-//     m[2] = 4.25189233395e-08;
-//     m[3] = 3.63331214177e-10;
-    //m[4] = 5.0e-11;
-    //m[5] = 1.0e-16;
-    //m[6] = 2.0e-22;
+//     m[1] = 0.010434127941130;
+//     m[2] = 0.000215889201212;
+//     m[3] = 0.000006706546880;
+//     m[4] = 0.000000277552952;
+//     m[5] = 0.000000014316036;
+//     m[6] = 0.000000000882038;
+
+//     m[0] = 1;
+//     m[1] = 0.010434127941130;
+//     m[2] = 0.000214824352576;
+//     m[3] = 0.000006629496652;
+//     m[4] = 0.000000272343972;
+//     m[5] = 0.000000013938099;
+//     m[6] = 0.000000000851871;
+
+//     m[0] = 1;
+//     m[1] = 0.010434127941130;
+//     m[2] = 0.000107412176288;
+//     m[3] = 0.000001147644909;
+//     m[4] = 0.000000014251596;
+//     m[5] = 0.000000000229834;
+//     m[6] = 0.000000000851871;
+    m[0] = 1;
+    m[1] = 0.010434127941130;
+    m[2] = 0.000120279467501;
+    m[3] = 0.000001690143115;
+    m[4] = 0.000000031081180;
+    m[5] = 0.000000000734385;
+    m[6] = 0.000000000851871;
 
     word support = "01";
-    word quadratureType = "GaussRadau";
+    word quadratureType = "Gauss";
+//     word quadratureType = "GaussRadau";
 
     Info << "Support: " << support << endl;
     Info << "Quadrature type: " << quadratureType << endl;

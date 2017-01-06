@@ -110,6 +110,7 @@ Foam::mixingSubModels::mixingKernels::FokkerPlanck::K
     );
 
     dimensionedScalar oneMoment("oneMoment", moments[1].dimensions(), 1.0);
+    dimensionedScalar oneK("oneK", sqr(dimTime)/sqr(dimLength), 1.0);
 
     if (momentOrder == 0)
     {
@@ -117,14 +118,34 @@ Foam::mixingSubModels::mixingKernels::FokkerPlanck::K
     }
     else
     {
-        mixingK.ref() += momentOrder*Cphi_*flTurb.epsilon()/flTurb.k()
-            *moments[momentOrder - 1]
-            *((Cmixing_ + 1.0)*moments[1] + Cmixing_*(momentOrder - 1)*oneMoment
-            *((moments[2] - sqr(moments[1]))/(moments[1]*oneMoment
-            - moments[2]))) - fvm::SuSp(momentOrder*Cphi_*flTurb.epsilon()
-            /flTurb.k()*((Cmixing_ + 1.0) + Cmixing_*(momentOrder - 1)
-            *((moments[2] - sqr(moments[1]))/(moments[1]*oneMoment
-            - moments[2]))), moment);
+        mixingK.ref() +=
+            momentOrder*flTurb.epsilon()*0.5*moments[momentOrder - 1]
+           *(
+                (Cmixing_ + 1.0)*Cphi_*moments[1]/flTurb.k()
+                +
+                Cmixing_*(momentOrder - 1)*oneMoment
+                /max((moments[1]*oneMoment - moments[2]), 1.0e-6)*oneK
+            )
+            - fvm::SuSp
+            (
+                momentOrder*flTurb.epsilon()*0.5
+               *(
+                  (Cmixing_ + 1.0)*Cphi_/flTurb.k()
+                  +
+                  Cmixing_*(momentOrder - 1)
+                  /max((moments[1]*oneMoment - moments[2]), 1.0e-6)*oneK
+                ),
+                moment
+            );
+
+//         mixingK.ref() += momentOrder*Cphi_*flTurb.epsilon()/flTurb.k()
+//             *moments[momentOrder - 1]
+//             *((Cmixing_ + 1.0)*moments[1] + Cmixing_*(momentOrder - 1)*oneMoment
+//             *((moments[2] - sqr(moments[1]))/(moments[1]*oneMoment
+//             - moments[2]))) - fvm::SuSp(momentOrder*Cphi_*flTurb.epsilon()
+//             /flTurb.k()*((Cmixing_ + 1.0) + Cmixing_*(momentOrder - 1)
+//             *((moments[2] - sqr(moments[1]))/(moments[1]*oneMoment
+//             - moments[2]))), moment);
     }
 
     return mixingK;

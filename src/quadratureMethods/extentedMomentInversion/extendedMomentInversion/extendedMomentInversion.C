@@ -115,10 +115,9 @@ void Foam::extendedMomentInversion::invert(const univariateMomentSet& moments)
     {
         // If the number of realizable moments is even, we apply the standard
         // QMOM directly to maximize the number of preserved moments.
-
-        m.invert();
         sigma_ = 0.0;
         nullSigma_ = true;
+        m.invert();
         secondaryQuadrature(m);
     }
     else
@@ -159,9 +158,9 @@ void Foam::extendedMomentInversion::invert(const univariateMomentSet& moments)
         // Check if sigma = 0 is root
         if (mag(fLow) <= targetFunctionTol_)
         {
-            m.invert();
             sigma_ = 0.0;
             nullSigma_ = true;
+            m.invert();
             secondaryQuadrature(m);
 
             return;
@@ -181,9 +180,9 @@ void Foam::extendedMomentInversion::invert(const univariateMomentSet& moments)
             // If sigma_ is small, use QMOM
             if (mag(sigma_) < sigmaMin_)
             {
-                m.invert();
                 sigma_ = 0.0;
                 nullSigma_ = true;
+                m.invert();
                 secondaryQuadrature(m);
 
                 return;
@@ -232,9 +231,9 @@ void Foam::extendedMomentInversion::invert(const univariateMomentSet& moments)
                 // If sigma_ is small, use QMOM
                 if (mag(sigma_) < sigmaMin_)
                 {
-                    m.invert();
                     sigma_ = 0.0;
                     nullSigma_ = true;
+                    m.invert();
                     secondaryQuadrature(m);
 
                     return;
@@ -260,9 +259,9 @@ void Foam::extendedMomentInversion::invert(const univariateMomentSet& moments)
                     // If sigma_ is small, use QMOM
                     if (mag(sigma_) < sigmaMin_)
                     {
-                        m.invert();
                         sigma_ = 0.0;
                         nullSigma_ = true;
+                        m.invert();
                         secondaryQuadrature(m);
 
                         return;

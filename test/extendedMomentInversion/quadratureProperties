@@ -15,9 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-extendedMomentInversion	beta;
+extendedMomentInversion	lognormal;
 
-nSecondaryNodes    50;
+nSecondaryNodes    20;
 maxSigmaIter       100000;
 momentsTol         1.0e-14;
 sigmaTol           1.0e-14;

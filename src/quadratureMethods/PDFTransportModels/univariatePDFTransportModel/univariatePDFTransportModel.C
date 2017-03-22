@@ -127,7 +127,7 @@ void Foam::PDFTransportModels::univariatePDFTransportModel::solve()
             (
                 fvm::ddt(m)
               + fvm::div(phi_, m, "div(phi,moment)")
-              //+ physicalSpaceConvection(m)
+//               + physicalSpaceConvection(m)
               - momentDiffusion(m)
               ==
                 momentSource(m)

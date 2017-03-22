@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 {
     Info << "Testing univariateMomentSet\n" << endl;
 
-    label nMoments = 7;
+    label nMoments = 5;
 
     scalarDiagonalMatrix m(nMoments, 0.0);
     // Computing integer moments of a log-normal function
@@ -122,17 +122,23 @@ int main(int argc, char *argv[])
 //     m[4] = 0.000000014251596;
 //     m[5] = 0.000000000229834;
 //     m[6] = 0.000000000851871;
-    m[0] = 1;
-    m[1] = 0.010434127941130;
-    m[2] = 0.000120279467501;
-    m[3] = 0.000001690143115;
-    m[4] = 0.000000031081180;
-    m[5] = 0.000000000734385;
-    m[6] = 0.000000000851871;
+//     m[0] = 1;
+//     m[1] = 0.010434127941130;
+//     m[2] = 0.000120279467501;
+//     m[3] = 0.000001690143115;
+//     m[4] = 0.000000031081180;
+//     m[5] = 0.000000000734385;
+//     m[6] = 0.000000000851871;
+
+    m[0] = 1.00000001612;
+    m[1] = 1.00000001635;
+    m[2] = 1.00000001637;
+    m[3] = 1.00000001619;
+    m[4] = 1.000000016;
 
     word support = "01";
-    word quadratureType = "Gauss";
-//     word quadratureType = "GaussRadau";
+//     word quadratureType = "Gauss";
+    word quadratureType = "GaussRadau";
 
     Info << "Support: " << support << endl;
     Info << "Quadrature type: " << quadratureType << endl;

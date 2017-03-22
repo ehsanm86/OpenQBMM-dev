@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
 
     Info << "Testing extendedMomentInversion\n" << endl;
 
-    label nMoments = 7;
-    word support = "01";
+    label nMoments = 5;
+    word support = "RPlus";
     univariateMomentSet moments(nMoments, 0.0, "Gauss", support);
 
     // Dirac delta function
@@ -59,11 +59,11 @@ int main(int argc, char *argv[])
 //     moments[4] = 1.0;
 
 //  Valid moment set
-//    moments[0] = 1.0;
-//    moments[1] = 2.708217669;
-//    moments[2] = 8.951330468;
-//    moments[3] = 35.95258119;
-//    moments[4] = 174.4370267;
+   moments[0] = 1.0;
+   moments[1] = 2.708217669;
+   moments[2] = 8.951330468;
+   moments[3] = 35.95258119;
+   moments[4] = 174.4370267;
 
 //  Unrealizable moment star
 //     moments[0] = 0.567128698550116;
@@ -138,13 +138,13 @@ int main(int argc, char *argv[])
 //     moments[5] = 0.000000014316036;
 //     moments[6] = 0.000000000882038;
 
-    moments[0] = 1;
-    moments[1] = 0.010434127941130;
-    moments[2] = 0.000214824352576;
-    moments[3] = 0.000006629496652;
-    moments[4] = 0.000000272343972;
-    moments[5] = 0.000000013938099;
-    moments[6] = 0.000000000851871;
+//     moments[0] = 1;
+//     moments[1] = 0.010434127941130;
+//     moments[2] = 0.000214824352576;
+//     moments[3] = 0.000006629496652;
+//     moments[4] = 0.000000272343972;
+//     moments[5] = 0.000000013938099;
+//     moments[6] = 0.000000000851871;
 
     Info << setprecision(16);
     Info << "Input moments\n" << endl;

@@ -7,26 +7,20 @@
 -------------------------------------------------------------------------------
 License
     This file is derivative work of OpenFOAM.
-
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
-
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
 Application
     Test-UnivariateMomentSet
-
 Description
     Test univariateMomentSet class and methods.
-
 \*---------------------------------------------------------------------------*/
 
 #include "IOmanip.H"
@@ -83,61 +77,18 @@ int main(int argc, char *argv[])
 //     }
 
 // Computing integer moments of a beta function
-//     scalar mu = 0.5;
-//     scalar sigma = 0.3;
-//
-//     m[0] = 1.0;
-//
-//     for (label momenti = 1; momenti < nMoments; momenti++)
-//     {
-//         m[momenti] = (mu + (momenti - 1.0)*sigma)*m[momenti-1]
-//             /(1.0 + (momenti - 1.0)*sigma);
-//     }
+    scalar mu = 0.5;
+    scalar sigma = 0.3;
 
+    m[0] = 1.0;
 
-
-//    m[0] = 1.0;
-//    m[1] = 0.0;
-
-//     m[0] = 1;
-//     m[1] = 0.010434127941130;
-//     m[2] = 0.000215889201212;
-//     m[3] = 0.000006706546880;
-//     m[4] = 0.000000277552952;
-//     m[5] = 0.000000014316036;
-//     m[6] = 0.000000000882038;
-
-//     m[0] = 1;
-//     m[1] = 0.010434127941130;
-//     m[2] = 0.000214824352576;
-//     m[3] = 0.000006629496652;
-//     m[4] = 0.000000272343972;
-//     m[5] = 0.000000013938099;
-//     m[6] = 0.000000000851871;
-
-//     m[0] = 1;
-//     m[1] = 0.010434127941130;
-//     m[2] = 0.000107412176288;
-//     m[3] = 0.000001147644909;
-//     m[4] = 0.000000014251596;
-//     m[5] = 0.000000000229834;
-//     m[6] = 0.000000000851871;
-//     m[0] = 1;
-//     m[1] = 0.010434127941130;
-//     m[2] = 0.000120279467501;
-//     m[3] = 0.000001690143115;
-//     m[4] = 0.000000031081180;
-//     m[5] = 0.000000000734385;
-//     m[6] = 0.000000000851871;
-
-    m[0] = 1.00000001612;
-    m[1] = 1.00000001635;
-    m[2] = 1.00000001637;
-    m[3] = 1.00000001619;
-    m[4] = 1.000000016;
+    for (label momenti = 1; momenti < nMoments; momenti++)
+    {
+        m[momenti] = (mu + (momenti - 1.0)*sigma)*m[momenti-1]
+            /(1.0 + (momenti - 1.0)*sigma);
+    }
 
     word support = "01";
-//     word quadratureType = "Gauss";
     word quadratureType = "GaussRadau";
 
     Info << "Support: " << support << endl;

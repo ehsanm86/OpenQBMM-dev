@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2014-2016 Alberto Passalacqua
+    \\  /    A nd           | Copyright (C) 2014-2017 Alberto Passalacqua
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -591,6 +591,9 @@ void Foam::univariateMomentSet::checkRealizability()
 
     if (support_ == "R")
     {
+        alpha_[nD] = zRecurrence[nD][nD + 1]/zRecurrence[nD][nD]
+                    - zRecurrence[nD - 1][nD]/zRecurrence[nD - 1][nD - 1];
+
         if (beta_[nD] < 0.0)
         {
             nRealizableMoments_ = 2*nD;
@@ -819,8 +822,6 @@ void Foam::univariateMomentSet::setupQuadrature
 
     weights_.resize(nNodes_, 0.0);
     abscissae_.resize(nNodes_, 0.0);
-
-    //quadratureSetUp_ = true;
 }
 
 void Foam::univariateMomentSet::update()
